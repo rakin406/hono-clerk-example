@@ -11,9 +11,12 @@ app.get("/", (c) => {
   const auth = getAuth(c);
 
   if (!auth?.userId) {
-    return c.json({
-      message: "You are not logged in.",
-    });
+    return c.json(
+      {
+        message: "You are not logged in.",
+      },
+      401,
+    );
   }
 
   return c.json({
@@ -22,7 +25,31 @@ app.get("/", (c) => {
   });
 });
 
-app.get("/login", (c) => c.text("Login endpoint"));
+app.post("/register", async (c) => {
+  const clerkClient = c.get("clerk");
+  const body = await c.req.formData();
+
+  const email = body.get("email");
+  const password = body.get("password");
+
+  if (!email || !password) {
+    return c.json(
+      {
+        message: "You gave insufficient data.",
+      },
+      401,
+    );
+  }
+
+  await clerkClient.users.createUser({
+    emailAddress: [email.toString()],
+    password: password.toString(),
+  });
+
+  return c.json({ message: "You have registered!" }, 201);
+});
+
+app.get("/login", async (c) => {});
 
 app.get("/logout", (c) => c.text("Logout endpoint"));
 
