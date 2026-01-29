@@ -5,6 +5,8 @@ import { sValidator } from "@hono/standard-validator";
 import * as z from "zod";
 import { clerkMiddleware, getAuth } from "@hono/clerk-auth";
 
+// TODO: Implement login, logout and delete user.
+
 const User = z.object({
   email: z.string(),
   password: z.string().min(8),
@@ -44,7 +46,17 @@ app.post("/register", sValidator("form", User), async (c) => {
   return c.json({ message: "You have registered!" }, 201);
 });
 
-app.get("/login", async (c) => {});
+app.post("/login", sValidator("form", User), async (c) => {
+  // const clerkClient = c.get("clerk");
+  // const data = c.req.valid("form");
+  //
+  // await clerkClient.users.createUser({
+  //   emailAddress: [data.email],
+  //   password: data.password,
+  // });
+  //
+  // return c.json({ message: "You have registered!" }, 201);
+});
 
 app.get("/logout", (c) => c.text("Logout endpoint"));
 
