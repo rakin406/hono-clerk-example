@@ -1,7 +1,14 @@
 import "dotenv/config";
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
+import { sValidator } from "@hono/standard-validator";
+import * as z from "zod";
 import { clerkMiddleware, getAuth } from "@hono/clerk-auth";
+
+const User = z.object({
+  email: z.string(),
+  password: z.string().min(8),
+});
 
 const app = new Hono();
 
@@ -25,25 +32,13 @@ app.get("/", (c) => {
   });
 });
 
-app.post("/register", async (c) => {
+app.post("/register", sValidator("form", User), async (c) => {
   const clerkClient = c.get("clerk");
-  const body = await c.req.formData();
-
-  const email = body.get("email");
-  const password = body.get("password");
-
-  if (!email || !password) {
-    return c.json(
-      {
-        message: "You gave insufficient data.",
-      },
-      401,
-    );
-  }
+  const data = c.req.valid("form");
 
   await clerkClient.users.createUser({
-    emailAddress: [email.toString()],
-    password: password.toString(),
+    emailAddress: [data.email],
+    password: data.password,
   });
 
   return c.json({ message: "You have registered!" }, 201);
