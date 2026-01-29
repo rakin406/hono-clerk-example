@@ -1,2 +1,8 @@
-# hono-clerk-example
-Hono backend with Clerk authentication example
+```
+npm install
+npm run dev
+```
+
+```
+open http://localhost:3000
+```
