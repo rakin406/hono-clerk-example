@@ -4,6 +4,9 @@ import { Hono } from "hono";
 const app = new Hono();
 
 app.get("/", (c) => c.text("Hello Node.js!"));
+app.get("/login", (c) => c.text("Login endpoint"));
+app.get("/logout", (c) => c.text("Logout endpoint"));
+app.get("/delete", (c) => c.text("Delete endpoint"));
 
 const server = serve(app);
 
